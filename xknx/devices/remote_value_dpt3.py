@@ -51,25 +51,25 @@ class RemoteValueDpt3(RemoteValue):
             sign = 1 if sign == 0 else 0
 
         ret = DPTBinary(0)
-        if   abs(value) >= 100:
-            ret = DPTBinary(sign<<3 | 1)
-        if abs(value) >= 50:
-            ret = DPTBinary(sign<<3 | 2)
-        if abs(value) >= 25:
-            ret = DPTBinary(sign<<3 | 3)
-        if abs(value) >= 12:
-            ret = DPTBinary(sign<<3 | 4)
-        if abs(value) >= 6:
-            ret = DPTBinary(sign<<3 | 5)
-        if abs(value) >= 3:
-            ret = DPTBinary(sign<<3 | 6)
-        if abs(value) >= 1:
-            ret = DPTBinary(sign<<3 | 7)
+        if abs(value) >= 100:
+            ret = DPTBinary(sign << 3 | 1)
+        elif abs(value) >= 50:
+            ret = DPTBinary(sign << 3 | 2)
+        elif abs(value) >= 25:
+            ret = DPTBinary(sign << 3 | 3)
+        elif abs(value) >= 12:
+            ret = DPTBinary(sign << 3 | 4)
+        elif abs(value) >= 6:
+            ret = DPTBinary(sign << 3 | 5)
+        elif abs(value) >= 3:
+            ret = DPTBinary(sign << 3 | 6)
+        elif abs(value) >= 1:
+            ret = DPTBinary(sign << 3 | 7)
         return ret
 
     def from_knx(self, payload):
         """Convert current payload to value."""
-        if payload.value & ~0x0F != 0: # more than 4-bit
+        if payload.value & ~0x0F != 0:  # more than 4-bit
             raise CouldNotParseTelegram("payload invalid", payload=payload, device_name=self.device_name)
         # calculated using floor(100/2^((value&0x07)-1))
         value = [0, -100, -50, -25, -12, -6, -3, -1, 0, 100, 50, 25, 12, 6, 3, 1][payload.value & 0x0F]
@@ -92,7 +92,7 @@ class RemoteValueStartStopDimming(RemoteValue):
         STOP = 2
 
         def __str__(self):
-            """Return string representation"""
+            """Return string representation."""
             return self.name
 
     def __init__(self,
@@ -125,8 +125,8 @@ class RemoteValueStartStopDimming(RemoteValue):
 
     def from_knx(self, payload):
         """Convert current payload to value."""
-        if payload.value & ~0x0F != 0: # more than 4-bit
-            pass # raises exception below
+        if payload.value & ~0x0F != 0:  # more than 4-bit
+            pass  # raises exception below
         elif payload.value & 0x07 == 0:
             return self.Direction.STOP
         elif payload.value & 0x08 == 0:
@@ -159,7 +159,7 @@ class RemoteValueStartStopBlinds(RemoteValue):
         STOP = 2
 
         def __str__(self):
-            """Return string representation"""
+            """Return string representation."""
             return self.name
 
     def __init__(self,
@@ -192,8 +192,8 @@ class RemoteValueStartStopBlinds(RemoteValue):
 
     def from_knx(self, payload):
         """Convert current payload to value."""
-        if payload.value & ~0x0F != 0: # more than 4-bit
-            pass # raises exception below
+        if payload.value & ~0x0F != 0:  # more than 4-bit
+            pass  # raises exception below
         elif payload.value & 0x07 == 0:
             return self.Direction.STOP
         elif payload.value & 0x08 == 0:
@@ -202,7 +202,7 @@ class RemoteValueStartStopBlinds(RemoteValue):
             return self.Direction.DOWN if not self.invert else self.Direction.UP
         raise CouldNotParseTelegram("payload invalid", payload=payload, device_name=self.device_name)
 
-    async def up(self): #pylint: disable=invalid-name
+    async def up(self):  # pylint: disable=invalid-name
         """Set value to up."""
         await self.set(self.Direction.UP)
 

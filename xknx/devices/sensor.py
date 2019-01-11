@@ -8,9 +8,9 @@ It provides functionality for
 """
 from .device import Device
 from .remote_value_dpt_value_1_ucount import RemoteValueDptValue1Ucount
+from .remote_value_dpt3 import RemoteValueDpt3, RemoteValueStartStopDimming, RemoteValueStartStopBlinds
 from .remote_value_scaling import RemoteValueScaling
 from .remote_value_sensor import RemoteValueSensor
-from .remote_value_dpt3 import RemoteValueDpt3, RemoteValueStartStopDimming, RemoteValueStartStopBlinds
 
 
 class Sensor(Device):
