@@ -67,3 +67,10 @@ class Scene(Device):
     def __eq__(self, other):
         """Equal operator."""
         return self.__dict__ == other.__dict__
+    
+    async def process_group_write(self, telegram):
+        """enable processing incoming telegrams for scene"""
+        """Process incoming GROUP WRITE telegram."""
+        # Scene number is DPT17.001
+        if self.scene_number == telegram.payload.value[0] + 1:
+            await self.scene_value.process(telegram)
