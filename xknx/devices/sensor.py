@@ -7,6 +7,10 @@ It provides functionality for
 * watching for state updates from KNX bus.
 """
 from .device import Device
+from .remote_value_dpt3 import (
+    RemoteValueDpt3, RemoteValueStartStopBlinds, RemoteValueStartStopDimming)
+from .remote_value_dpt_value_1_ucount import RemoteValueDptValue1Ucount
+from .remote_value_scaling import RemoteValueScaling
 from .remote_value_sensor import RemoteValueSensor
 
 

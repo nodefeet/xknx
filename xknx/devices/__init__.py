@@ -29,3 +29,7 @@ from .scene import Scene
 from .sensor import Sensor
 from .switch import Switch
 from .travelcalculator import TravelCalculator, TravelStatus
+from .remote_value_scaling import RemoteValueScaling
+from .remote_value_dpt_value_1_ucount import RemoteValueDptValue1Ucount
+from .remote_value_dpt_2_byte_unsigned import RemoteValueDpt2ByteUnsigned
+from .remote_value_dpt3 import RemoteValueDpt3, RemoteValueStartStopDimming, RemoteValueStartStopBlinds
