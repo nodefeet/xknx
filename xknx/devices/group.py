@@ -28,24 +28,27 @@ class Group(Device):
         group_address_switch=None,
         group_address_switch_state=None,
         group_address_switch_status=None,
-        group_address_dimming_in=None,
-        group_address_dimming_out=None,
+        group_address_dimming_val=None,
         group_address_brightness=None,
         group_address_brightness_status=None,
-        group_address_rgb=None,
-        group_address_rgb_status=None,
-        group_address_xyY=None,
-        group_address_xyY_status=None,
-        group_address_H=None,
-        group_address_S=None,
-        group_address_CCT=None,
+        group_address_color_rgb=None,
+        group_address_color_rgb_status=None,
+        group_address_color_xyY=None,
+        group_address_color_xyY_status=None,
+        group_address_dimming_hue=None,
+        group_address_dimming_sat=None,
+        group_address_dimming_cct=None,
         ##
-        switch_st=None,
-        switch_RMs=None,
-        dimming_in_dm=None,
-        brightness_wt=None,
-        brightness_RMw=None,
-        color_rgb=None,
+        switch_cb=None,
+        switch_status_cb=None,
+        dimming_val_cb=None,
+        brightness_cb=None,
+        brightness_status_cb=None,
+        color_rgb_cb=None,
+        color_xyY_status_cb=None,
+        dimming_hue_cb=None,
+        dimming_sat_cb=None,
+        dimming_cct_cb=None,
     ):
 
         """Initialize Light class."""
@@ -57,63 +60,81 @@ class Group(Device):
             group_address_switch,
             group_address_switch_state,
             device_name=self.name,
-            after_update_cb=switch_updated_cb,
+            after_update_cb=switch_cb,
         )
 
-        self.switch_status = RemoteValueSwitch(xknx, group_address_switch_status, device_name=self.name)
-
-        self.dimming_in = RemoteValueDpt3(
-            xknx, group_address_dimming_in, device_name=self.name, after_update_cb=dimming_in_updated_cb
+        self.switch_status = RemoteValueSwitch(
+            xknx, group_address_switch_status, device_name=self.name
         )
 
-        self.dimming_out = RemoteValueDpt3(xknx, group_address_dimming_out, device_name=self.name)
+        self.dimming_val = RemoteValueDpt3(
+            xknx, group_address_dimming_val, device_name=self.name, after_update_cb=dimming_val_cb
+        )
 
         self.brightness = RemoteValueScaling(
             xknx,
             group_address_brightness,
             device_name=self.name,
-            after_update_cb=brightness_updated_cb,
+            after_update_cb=brightness_cb,
             range_from=0,
             range_to=255,
         )
 
         self.brightness_status = RemoteValueScaling(
-            xknx, group_address_brightness_status, device_name=self.name, range_from=0, range_to=255
+            xknx,
+            group_address_brightness_status,
+            device_name=self.name,
+            range_from=0,
+            range_to=255,
         )
 
         self.color_rgb = RemoteValueColorRGB(
-            xknx, group_address_color_rgb, device_name=self.name, after_update_cb=color_rgb_updated_cb
+            xknx, group_address_color_rgb, device_name=self.name, after_update_cb=color_rgb_cb
         )
 
-        self.color_rgb_status = RemoteValueColorRGB(xknx, group_address_color_rgb_status, device_name=self.name)
+        self.color_rgb_status = RemoteValueColorRGB(
+            xknx, group_address_color_rgb_status, device_name=self.name
+        )
 
         self.color_xyY = RemoteValueColorXyY(xknx, group_address_color_xyY, device_name=self.name)
 
+        self.color_xyY_status = RemoteValueColorXyY(
+            xknx, group_address_color_xyY_status, device_name=self.name
+        )
+
+        self.dimming_hue = RemoteValueDpt3(
+            xknx, group_address_dimming_hue, device_name=self.name, after_update_cb=dimming_hue_cb
+        )
+
+        self.dimming_sat = RemoteValueDpt3(
+            xknx, group_address_dimming_sat, device_name=self.name, after_update_cb=dimming_sat_cb
+        )
+
+        self.dimming_cct = RemoteValueDpt3(
+            xknx, group_address_dimming_cct, device_name=self.name, after_update_cb=dimming_cct_cb
+        )
+
     @property
     def supports_dimming(self):
-        """Return if light supports brightness."""
-        return self.dimming_in.initialized
+        return self.dimming_val.initialized
 
     @property
     def supports_brightness(self):
-        """Return if light supports brightness."""
         return self.brightness.initialized
 
     @property
     def supports_color(self):
-        """Return if light supports color."""
         return self.color_rgb.initialized
 
     @property
     def supports_color_xyY(self):
-        """Return if light supports xyY color space."""
         return self.color_xyY.initialized
 
     def has_group_address(self, group_address):
         """Test if device has given group address."""
         return (
             self.switch.has_group_address(group_address)
-            or self.dimming_in.has_group_address(group_address)  # noqa W503
+            or self.dimming_val.has_group_address(group_address)  # noqa W503
             or self.brightness.has_group_address(group_address)  # noqa W503
             or self.color_rgb.has_group_address(group_address)  # noqa W503
             or self.color_xyY.has_group_address(group_address)  # noqa W503
@@ -123,7 +144,7 @@ class Group(Device):
         """Return object as readable string."""
         return (
             f"KNX_Group(name={self.name}, st:{self.switch.group_address}, RMs:{self.switch_status.group_address},"
-            f"dm:{self.dimming_in.group_address}, wr:{self.brightness.group_address},"
+            f"dm:{self.dimming_val.group_address}, wr:{self.brightness.group_address},"
             f" RMw:{self.brightness_status.group_address}, rgb:{self.color_rgb.group_address},"
             f"RMrgb:{self.color_rgb_status.group_address}, xyY:{self.color_xyY.group_address}"
         )
@@ -139,8 +160,8 @@ class Group(Device):
     async def set_off(self):
         await self.switch.off()
 
-    async def set_dimming(self, value):
-        await self.dimming_out.set(value)
+    async def set_dimming_val(self, value):
+        await self.dimming_val.set(value)
 
     @property
     def current_brightness(self):
@@ -177,7 +198,9 @@ class Group(Device):
     async def set_color_xyY(self, color_xyY):
         """Set xyY color of light."""
         if not self.supports_color_xyY:
-            self.xknx.logger.warning("CIE xyY Color Space not supported for device %s", self.get_name())
+            self.xknx.logger.warning(
+                "CIE xyY Color Space not supported for device %s", self.get_name()
+            )
             return
         await self.color_xyY.set(color_xyY)
 
@@ -193,7 +216,7 @@ class Group(Device):
     async def process_group_write(self, telegram):
         """Process incoming GROUP WRITE telegram."""
         await self.switch.process(telegram)
-        await self.dimming_in.process(telegram)
+        await self.dimming_val.process(telegram)
         await self.brightness.process(telegram)
         await self.color_rgb.process(telegram)
         # await self.color_xyY.process(telegram)
