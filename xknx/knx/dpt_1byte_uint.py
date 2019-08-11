@@ -70,11 +70,11 @@ class DPTSceneNumber(DPTValue1Ucount):
     """
     Abstraction for KNX 1 Octet Scene Number.
 
-    DPT 17.001
+    DPT 18.001
     """
 
     value_min = 1
-    value_max = 64
+    value_max = 192  # ~nodefeet changed to allow learning 64
 
     @classmethod
     def from_knx(cls, raw):
