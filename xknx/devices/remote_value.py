@@ -120,10 +120,11 @@ class RemoteValue():
         updated = False
         # if self.payload is None or payload != self.payload:
         self.payload = payload
-        updated = False # to avoid double call of callback, was True
+        # updated = True 
         await self.send()
-        if updated and self.after_update_cb is not None:
-            await self.after_update_cb()
+        # to avoid double call of callback, was True
+        # if updated and self.after_update_cb is not None:
+        #     await self.after_update_cb()
 
     @property
     def unit_of_measurement(self):
