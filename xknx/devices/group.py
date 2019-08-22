@@ -131,7 +131,7 @@ class Group(Device):
         self.switch.group_address = GroupAddress(db.address_switch)
         # self.switch.group_address_status = GroupAddress(db.address_switch_status)
         self.dimming_val.group_address = GroupAddress(db.address_dimming_val)
-        self.brightness.group_address = GroupAddress(db.address_dimming_val)
+        self.brightness.group_address = GroupAddress(db.address_brightness)
         # self.brightness_status.group_address = GroupAddress(db.address_brightness_status)
         self.color_xyY.group_address = GroupAddress(db.address_color_xyY)
         # self.color_xyY_status.group_address = GroupAddress(db.address_color_xyY_status)
@@ -146,7 +146,7 @@ class Group(Device):
         self.address_switch = db.address_switch
         # self.switch.group_address_status = None
         self.address_dimming_val = db.address_dimming_val
-        self.address_brightness = db.address_dimming_val
+        self.address_brightness = db.address_brightness
         # self.address_brightness_status = db.address_brightness_status
         self.address_color_xyY = db.address_color_xyY
         # self.address_color_xyY_status = db.address_color_xyY_status
