@@ -40,8 +40,9 @@ class Group(Device):
         """Initialize Light class."""
         # pylint: disable=too-many-arguments
         super().__init__(xknx, str(db.id))
-
+        self.xknx = xknx
         self.address_switch = db.address_switch
+        self.addresses_switch_state = db.addresses_switch_state
         # self.address_switch_status = db.address_switch_status
         self.address_dimming_val = db.address_dimming_val
         self.address_brightness = db.address_brightness
@@ -58,8 +59,13 @@ class Group(Device):
         self.address_dimming_cct_status = db.address_dimming_cct_status
 
         self.switch = RemoteValueSwitch(
-            xknx, db.address_switch, None, device_name=self.name, after_update_cb=switch_cb
+            xknx, db.address_switch, device_name=self.name, after_update_cb=switch_cb
         )
+        if db.addresses_switch_state:
+            self.switch_states = [
+                RemoteValueSwitch(xknx, address.strip(), device_name=self.name)
+                for address in db.addresses_switch_state.split(",")
+            ]
 
         # self.switch_status = RemoteValueSwitch(
         #     xknx, db.address_switch_status, device_name=self.name
@@ -123,6 +129,7 @@ class Group(Device):
     def update(self, db):
 
         self.switch.group_address = GroupAddress(db.address_switch)
+        # self.switch.group_address_status = GroupAddress(db.address_switch_status)
         self.dimming_val.group_address = GroupAddress(db.address_dimming_val)
         self.brightness.group_address = GroupAddress(db.address_dimming_val)
         # self.brightness_status.group_address = GroupAddress(db.address_brightness_status)
@@ -151,6 +158,11 @@ class Group(Device):
         self.address_dimming_hue_status = db.address_dimming_hue_status
         self.address_dimming_sat_status = db.address_dimming_sat_status
         self.address_dimming_cct_status = db.address_dimming_cct_status
+
+        self.switch_states = [
+            RemoteValueSwitch(self.xknx, address.strip(), device_name=self.name)
+            for address in db.addresses_switch_state.split(",")
+        ]
 
     @property
     def supports_dimming(self):
@@ -194,13 +206,6 @@ class Group(Device):
     def state(self):
         """Return the current switch state of the device."""
         return self.switch.value == RemoteValueSwitch.Value.ON
-
-    async def set_on(self, on):
-        if on:
-            await self.switch.on()
-        else:
-            await self.switch.off()
-
 
     async def process_group_write(self, telegram):
         """Process incoming GROUP WRITE telegram."""
