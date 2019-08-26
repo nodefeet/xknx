@@ -28,6 +28,7 @@ class Group(Device):
         db,
         switch_cb=None,
         switch_status_cb=None,
+        switch_state_cb=None,
         dimming_val_cb=None,
         brightness_cb=None,
         brightness_status_cb=None,
@@ -41,6 +42,7 @@ class Group(Device):
         # pylint: disable=too-many-arguments
         super().__init__(xknx, str(db.id))
         self.xknx = xknx
+        self.switch_state_cb = switch_state_cb
         self.address_switch = db.address_switch
         self.addresses_switch_state = db.addresses_switch_state
         # self.address_switch_status = db.address_switch_status
@@ -63,7 +65,9 @@ class Group(Device):
         )
         if db.addresses_switch_state:
             self.switch_states = [
-                RemoteValueSwitch(xknx, address.strip(), device_name=self.name)
+                RemoteValueSwitch(
+                    xknx, address.strip(), device_name=self.name, after_update_cb=switch_state_cb
+                )
                 for address in db.addresses_switch_state.split(",")
             ]
 
@@ -160,7 +164,12 @@ class Group(Device):
         self.address_dimming_cct_status = db.address_dimming_cct_status
 
         self.switch_states = [
-            RemoteValueSwitch(self.xknx, address.strip(), device_name=self.name)
+            RemoteValueSwitch(
+                self.xknx,
+                address.strip(),
+                device_name=self.name,
+                after_update_cb=self.switch_state_cb,
+            )
             for address in db.addresses_switch_state.split(",")
         ]
 
