@@ -6,12 +6,9 @@ It provides functionality for
 * reading the current state from KNX bus.
 * watching for state updates from KNX bus.
 """
+from xknx.remote_value import RemoteValueSensor
+
 from .device import Device
-from .remote_value_dpt3 import (
-    RemoteValueDpt3, RemoteValueStartStopBlinds, RemoteValueStartStopDimming)
-from .remote_value_dpt_value_1_ucount import RemoteValueDptValue1Ucount
-from .remote_value_scaling import RemoteValueScaling
-from .remote_value_sensor import RemoteValueSensor
 
 
 class Sensor(Device):
