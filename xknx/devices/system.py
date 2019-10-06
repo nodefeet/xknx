@@ -1,5 +1,5 @@
 from .device import Device
-from .remote_value_datetime import DateTimeType, RemoteValueDateTime
+from xknx.remote_value import DateTimeType, RemoteValueDateTime
 
 
 class System(Device):

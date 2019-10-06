@@ -4,7 +4,7 @@ Module for managing an RGB remote value.
 DPT 242.600.
 """
 from xknx.exceptions import ConversionError
-from xknx.knx import DPTArray
+from xknx.dpt import DPTArray
 
 from .remote_value import RemoteValue
 

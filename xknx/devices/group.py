@@ -9,12 +9,9 @@ It provides functionality for
 * reading the current state from KNX bus.
 """
 from .device import Device
-from .remote_value_color_rgb import RemoteValueColorRGB
-from .remote_value_color_xyY import RemoteValueColorXyY
-from .remote_value_dpt3 import RemoteValueDpt3  # RemoteValueStartStopDimming
-from .remote_value_scaling import RemoteValueScaling
-from .remote_value_switch import RemoteValueSwitch
-from ..knx import GroupAddress
+from xknx.remote_value import (
+    RemoteValueColorRGB, RemoteValueColorXyY, RemoteValueDpt3)
+from xknx.telegram import GroupAddress
 
 
 class Group(Device):

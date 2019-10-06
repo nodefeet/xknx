@@ -18,7 +18,7 @@ There are two separate dimming modes sharing the same DPT class:
 from enum import Enum
 
 from xknx.exceptions import ConversionError, CouldNotParseTelegram
-from xknx.knx import DPTBinary
+from xknx.dpt import DPTBinary
 
 from .remote_value import RemoteValue
 

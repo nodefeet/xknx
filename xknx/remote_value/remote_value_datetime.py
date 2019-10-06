@@ -7,7 +7,7 @@ Module for managing an KNX 3 Octet Time remote value.
 """
 from enum import Enum
 
-from xknx.knx import DPTArray, DPTDate, DPTTime  # DPTDateTime
+from xknx.dpt import DPTArray, DPTDate, DPTTime  # DPTDateTime
 
 from .remote_value import RemoteValue
 
