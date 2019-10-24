@@ -8,10 +8,16 @@ It provides functionality for
 * setting the color xyY.
 * reading the current state from KNX bus.
 """
-from .device import Device
 from xknx.remote_value import (
-    RemoteValueColorRGB, RemoteValueColorXyY, RemoteValueDpt3)
+    RemoteValueColorRGB,
+    RemoteValueColorXyY,
+    RemoteValueDpt3,
+    RemoteValueScaling,
+    RemoteValueSwitch,
+)
 from xknx.telegram import GroupAddress
+
+from .device import Device
 
 
 class Group(Device):
@@ -160,15 +166,16 @@ class Group(Device):
         self.address_dimming_sat_status = db.address_dimming_sat_status
         self.address_dimming_cct_status = db.address_dimming_cct_status
 
-        self.switch_states = [
-            RemoteValueSwitch(
-                self.xknx,
-                address.strip(),
-                device_name=self.name,
-                after_update_cb=self.switch_state_cb,
-            )
-            for address in db.addresses_switch_state.split(",")
-        ]
+        if db.addresses_switch_state:
+            self.switch_states = [
+                RemoteValueSwitch(
+                    self.xknx,
+                    address.strip(),
+                    device_name=self.name,
+                    after_update_cb=self.switch_state_cb,
+                )
+                for address in db.addresses_switch_state.split(",")
+            ]
 
     @property
     def supports_dimming(self):
