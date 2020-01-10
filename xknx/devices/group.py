@@ -30,13 +30,13 @@ class Group(Device):
         xknx,
         db,
         switch_cb=None,
-        switch_status_cb=None,
+        # switch_status_cb=None, <- no callback required
         switch_state_cb=None,
         dimming_val_cb=None,
         brightness_cb=None,
-        brightness_status_cb=None,
+        # brightness_status_cb=None, <- no callback required
         color_rgb_cb=None,
-        color_xyY_status_cb=None,
+        # color_xyY_status_cb=None, <- no callback required
         dimming_hue_cb=None,
         dimming_sat_cb=None,
         dimming_cct_cb=None,
@@ -48,12 +48,12 @@ class Group(Device):
         self.switch_state_cb = switch_state_cb
         self.address_switch = db.address_switch
         self.addresses_switch_state = db.addresses_switch_state
-        # self.address_switch_status = db.address_switch_status
+        self.address_switch_status = db.address_switch_status
         self.address_dimming_val = db.address_dimming_val
         self.address_brightness = db.address_brightness
-        # self.address_brightness_status = db.address_brightness_status
+        self.address_brightness_status = db.address_brightness_status
         self.address_color_xyY = db.address_color_xyY
-        # self.address_color_xyY_status = db.address_color_xyY_status
+        self.address_color_xyY_status = db.address_color_xyY_status
         self.address_color_rgb = db.address_color_rgb
         self.address_color_rgb_status = db.address_color_rgb_status
         self.address_dimming_hue = db.address_dimming_hue
@@ -74,9 +74,9 @@ class Group(Device):
                 for address in db.addresses_switch_state.split(",")
             ]
 
-        # self.switch_status = RemoteValueSwitch(
-        #     xknx, db.address_switch_status, device_name=self.name
-        # )
+        self.switch_status = RemoteValueSwitch(
+            xknx, db.address_switch_status, device_name=self.name
+        )
 
         self.dimming_val = RemoteValueDpt3(
             xknx, db.address_dimming_val, device_name=self.name, after_update_cb=dimming_val_cb
@@ -91,15 +91,15 @@ class Group(Device):
             range_to=255,
         )
 
-        # self.brightness_status = RemoteValueScaling(
-        #     xknx, db.address_brightness_status, device_name=self.name, range_from=0, range_to=255
-        # )
+        self.brightness_status = RemoteValueScaling(
+            xknx, db.address_brightness_status, device_name=self.name, range_from=0, range_to=255
+        )
 
         self.color_xyY = RemoteValueColorXyY(xknx, db.address_color_xyY, device_name=self.name)
 
-        # self.color_xyY_status = RemoteValueColorXyY(
-        #     xknx, db.address_color_xyY_status, device_name=self.name
-        # )
+        self.color_xyY_status = RemoteValueColorXyY(
+            xknx, db.address_color_xyY_status, device_name=self.name
+        )
 
         self.color_rgb = RemoteValueColorRGB(
             xknx, db.address_color_rgb, device_name=self.name, after_update_cb=color_rgb_cb
@@ -135,28 +135,72 @@ class Group(Device):
 
     def update(self, db):
 
-        self.switch.group_address = GroupAddress(db.address_switch)
-        # self.switch.group_address_status = GroupAddress(db.address_switch_status)
-        self.dimming_val.group_address = GroupAddress(db.address_dimming_val)
-        self.brightness.group_address = GroupAddress(db.address_brightness)
-        # self.brightness_status.group_address = GroupAddress(db.address_brightness_status)
-        self.color_xyY.group_address = GroupAddress(db.address_color_xyY)
-        # self.color_xyY_status.group_address = GroupAddress(db.address_color_xyY_status)
-        self.color_rgb.group_address = GroupAddress(db.address_color_rgb)
-        self.color_rgb.group_address_status = GroupAddress(db.address_color_rgb_status)
-        self.dimming_hue.group_address = GroupAddress(db.address_dimming_hue)
-        self.dimming_sat.group_address = GroupAddress(db.address_dimming_sat)
-        self.dimming_cct.group_address = GroupAddress(db.address_dimming_cct)
-        self.dimming_hue_status.group_address = GroupAddress(db.address_dimming_hue_status)
-        self.dimming_sat_status.group_address = GroupAddress(db.address_dimming_sat_status)
-        self.dimming_cct_status.group_address = GroupAddress(db.address_dimming_cct_status)
+        self.switch.group_address = (
+            GroupAddress(db.address_switch) if db.address_switch is not None else None
+        )
+        self.switch.group_address_status = (
+            GroupAddress(db.address_switch_status)
+            if db.address_switch_status is not None
+            else None
+        )
+        self.dimming_val.group_address = (
+            GroupAddress(db.address_dimming_val) if db.address_dimming_val is not None else None
+        )
+        self.brightness.group_address = (
+            GroupAddress(db.address_brightness) if db.address_brightness is not None else None
+        )
+        self.brightness_status.group_address = (
+            GroupAddress(db.address_brightness_status)
+            if db.address_brightness_status is not None
+            else None
+        )
+        self.color_xyY.group_address = (
+            GroupAddress(db.address_color_xyY) if db.address_color_xyY is not None else None
+        )
+        self.color_xyY_status.group_address = (
+            GroupAddress(db.address_color_xyY_status)
+            if db.address_color_xyY_status is not None
+            else None
+        )
+        self.color_rgb.group_address = (
+            GroupAddress(db.address_color_rgb) if db.address_color_rgb is not None else None
+        )
+        self.color_rgb.group_address_status = (
+            GroupAddress(db.address_color_rgb_status)
+            if db.address_color_rgb_status is not None
+            else None
+        )
+        self.dimming_hue.group_address = (
+            GroupAddress(db.address_dimming_hue) if db.address_dimming_hue is not None else None
+        )
+        self.dimming_sat.group_address = (
+            GroupAddress(db.address_dimming_sat) if db.address_dimming_sat is not None else None
+        )
+        self.dimming_cct.group_address = (
+            GroupAddress(db.address_dimming_cct) if db.address_dimming_cct is not None else None
+        )
+        self.dimming_hue_status.group_address = (
+            GroupAddress(db.address_dimming_hue_status)
+            if db.address_dimming_hue_status is not None
+            else None
+        )
+        self.dimming_sat_status.group_address = (
+            GroupAddress(db.address_dimming_sat_status)
+            if db.address_dimming_sat_status is not None
+            else None
+        )
+        self.dimming_cct_status.group_address = (
+            GroupAddress(db.address_dimming_cct_status)
+            if db.address_dimming_cct_status is not None
+            else None
+        )
         self.address_switch = db.address_switch
-        # self.switch.group_address_status = None
+        self.switch.group_address_status = db.address_switch_status
         self.address_dimming_val = db.address_dimming_val
         self.address_brightness = db.address_brightness
-        # self.address_brightness_status = db.address_brightness_status
+        self.address_brightness_status = db.address_brightness_status
         self.address_color_xyY = db.address_color_xyY
-        # self.address_color_xyY_status = db.address_color_xyY_status
+        self.address_color_xyY_status = db.address_color_xyY_status
         self.address_color_rgb = db.address_color_rgb
         self.address_color_rgb_status = db.address_color_rgb_status
         self.address_dimming_hue = db.address_dimming_hue
@@ -197,10 +241,14 @@ class Group(Device):
         """Test if device has given group address."""
         return (
             self.switch.has_group_address(group_address)
+            or self.switch_status.has_group_address(group_address)  # noqa W503
             or self.dimming_val.has_group_address(group_address)  # noqa W503
             or self.brightness.has_group_address(group_address)  # noqa W503
+            or self.brightness_status.has_group_address(group_address)  # noqa W503
             or self.color_xyY.has_group_address(group_address)  # noqa W503
+            or self.color_xyY_status.has_group_address(group_address)  # noqa W503
             or self.color_rgb.has_group_address(group_address)  # noqa W503
+            or self.color_rgb_status.has_group_address(group_address)  # noqa W503
             or self.dimming_hue.has_group_address(group_address)  # noqa W503
             or self.dimming_sat.has_group_address(group_address)  # noqa W503
             or self.dimming_cct.has_group_address(group_address)  # noqa W503
