@@ -138,7 +138,7 @@ class Group(Device):
         self.switch.group_address = (
             GroupAddress(db.address_switch) if db.address_switch is not None else None
         )
-        self.switch.group_address_status = (
+        self.switch_status.group_address = (
             GroupAddress(db.address_switch_status)
             if db.address_switch_status is not None
             else None
@@ -165,7 +165,7 @@ class Group(Device):
         self.color_rgb.group_address = (
             GroupAddress(db.address_color_rgb) if db.address_color_rgb is not None else None
         )
-        self.color_rgb.group_address_status = (
+        self.color_rgb_status.group_address = (
             GroupAddress(db.address_color_rgb_status)
             if db.address_color_rgb_status is not None
             else None
@@ -195,7 +195,8 @@ class Group(Device):
             else None
         )
         self.address_switch = db.address_switch
-        self.switch.group_address_status = db.address_switch_status
+        self.addresses_switch_state = db.addresses_switch_state
+        self.address_switch_status = db.address_switch_status
         self.address_dimming_val = db.address_dimming_val
         self.address_brightness = db.address_brightness
         self.address_brightness_status = db.address_brightness_status

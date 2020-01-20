@@ -73,5 +73,9 @@ class Scene(Device):
         """enable processing incoming telegrams for scene"""
         """Process incoming GROUP WRITE telegram."""
         # Scene number is DPT17.001
-        if self.scene_number == telegram.payload.value[0] + 1:
+        scene_number = telegram.payload.value[0] + 1
+        if scene_number > 128:
+            scene_number -= 128
+
+        if self.scene_number == scene_number:
             await self.scene_value.process(telegram)
