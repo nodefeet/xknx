@@ -15,7 +15,6 @@ from xknx.remote_value import (
     RemoteValueScaling,
     RemoteValueSwitch,
 )
-from xknx.telegram import GroupAddress
 
 from .device import Device
 
@@ -28,7 +27,8 @@ class Group(Device):
     def __init__(
         self,
         xknx,
-        db,
+        name,
+        addresses,
         switch_cb=None,
         # switch_status_cb=None, <- no callback required
         switch_state_cb=None,
@@ -41,50 +41,24 @@ class Group(Device):
         dimming_sat_cb=None,
         dimming_cct_cb=None,
     ):
-        """Initialize Light class."""
+        """Initialize Group class."""
         # pylint: disable=too-many-arguments
-        super().__init__(xknx, str(db.id))
+        super().__init__(xknx, name)
         self.xknx = xknx
-        self.switch_state_cb = switch_state_cb
-        self.address_switch = db.address_switch
-        self.addresses_switch_state = db.addresses_switch_state
-        self.address_switch_status = db.address_switch_status
-        self.address_dimming_val = db.address_dimming_val
-        self.address_brightness = db.address_brightness
-        self.address_brightness_status = db.address_brightness_status
-        self.address_color_xyY = db.address_color_xyY
-        self.address_color_xyY_status = db.address_color_xyY_status
-        self.address_color_rgb = db.address_color_rgb
-        self.address_color_rgb_status = db.address_color_rgb_status
-        self.address_dimming_hue = db.address_dimming_hue
-        self.address_dimming_sat = db.address_dimming_sat
-        self.address_dimming_cct = db.address_dimming_cct
-        self.address_dimming_hue_status = db.address_dimming_hue_status
-        self.address_dimming_sat_status = db.address_dimming_sat_status
-        self.address_dimming_cct_status = db.address_dimming_cct_status
 
         self.switch = RemoteValueSwitch(
-            xknx, db.address_switch, device_name=self.name, after_update_cb=switch_cb
+            xknx, addresses["SW"], device_name=self.name, after_update_cb=switch_cb
         )
-        if db.addresses_switch_state:
-            self.switch_states = [
-                RemoteValueSwitch(
-                    xknx, address.strip(), device_name=self.name, after_update_cb=switch_state_cb
-                )
-                for address in db.addresses_switch_state.split(",")
-            ]
 
-        self.switch_status = RemoteValueSwitch(
-            xknx, db.address_switch_status, device_name=self.name
-        )
+        self.switch_status = RemoteValueSwitch(xknx, addresses["SW_STAT"], device_name=self.name)
 
         self.dimming_val = RemoteValueDpt3(
-            xknx, db.address_dimming_val, device_name=self.name, after_update_cb=dimming_val_cb
+            xknx, addresses["VAL_DIM"], device_name=self.name, after_update_cb=dimming_val_cb,
         )
 
         self.brightness = RemoteValueScaling(
             xknx,
-            db.address_brightness,
+            addresses["VAL"],
             device_name=self.name,
             after_update_cb=brightness_cb,
             range_from=0,
@@ -92,135 +66,63 @@ class Group(Device):
         )
 
         self.brightness_status = RemoteValueScaling(
-            xknx, db.address_brightness_status, device_name=self.name, range_from=0, range_to=255
+            xknx, addresses["VAL_STAT"], device_name=self.name, range_from=0, range_to=255,
         )
 
-        self.color_xyY = RemoteValueColorXyY(xknx, db.address_color_xyY, device_name=self.name)
+        self.color_xyY = RemoteValueColorXyY(xknx, addresses["CLR_xyY"], device_name=self.name)
 
         self.color_xyY_status = RemoteValueColorXyY(
-            xknx, db.address_color_xyY_status, device_name=self.name
+            xknx, addresses["CLR_xyY_STAT"], device_name=self.name
         )
 
         self.color_rgb = RemoteValueColorRGB(
-            xknx, db.address_color_rgb, device_name=self.name, after_update_cb=color_rgb_cb
+            xknx, addresses["CLR_RGB"], device_name=self.name, after_update_cb=color_rgb_cb
         )
 
         self.color_rgb_status = RemoteValueColorRGB(
-            xknx, db.address_color_rgb_status, device_name=self.name
+            xknx, addresses["CLR_RGB_STAT"], device_name=self.name
         )
 
         self.dimming_hue = RemoteValueDpt3(
-            xknx, db.address_dimming_hue, device_name=self.name, after_update_cb=dimming_hue_cb
+            xknx, addresses["CLR_H_DIM"], device_name=self.name, after_update_cb=dimming_hue_cb,
         )
 
         self.dimming_sat = RemoteValueDpt3(
-            xknx, db.address_dimming_sat, device_name=self.name, after_update_cb=dimming_sat_cb
+            xknx, addresses["CLR_S_DIM"], device_name=self.name, after_update_cb=dimming_sat_cb,
         )
 
         self.dimming_cct = RemoteValueDpt3(
-            xknx, db.address_dimming_cct, device_name=self.name, after_update_cb=dimming_cct_cb
+            xknx, addresses["CLR_CCT_DIM"], device_name=self.name, after_update_cb=dimming_cct_cb,
         )
 
         self.dimming_hue_status = RemoteValueScaling(
-            xknx, db.address_dimming_hue_status, device_name=self.name, range_from=0, range_to=360
+            xknx, addresses["CLR_H_STAT"], device_name=self.name, range_from=0, range_to=360,
         )
 
         self.dimming_sat_status = RemoteValueScaling(
-            xknx, db.address_dimming_sat_status, device_name=self.name, range_from=0, range_to=255
+            xknx, addresses["CLR_S_STAT"], device_name=self.name, range_from=0, range_to=255,
         )
 
         self.dimming_cct_status = RemoteValueScaling(
-            xknx, db.address_dimming_cct_status, device_name=self.name, range_from=0, range_to=255
+            xknx, addresses["CLR_CCT_STAT"], device_name=self.name, range_from=0, range_to=255,
         )
 
-    def update(self, db):
-
-        self.switch.group_address = (
-            GroupAddress(db.address_switch) if db.address_switch is not None else None
-        )
-        self.switch_status.group_address = (
-            GroupAddress(db.address_switch_status)
-            if db.address_switch_status is not None
-            else None
-        )
-        self.dimming_val.group_address = (
-            GroupAddress(db.address_dimming_val) if db.address_dimming_val is not None else None
-        )
-        self.brightness.group_address = (
-            GroupAddress(db.address_brightness) if db.address_brightness is not None else None
-        )
-        self.brightness_status.group_address = (
-            GroupAddress(db.address_brightness_status)
-            if db.address_brightness_status is not None
-            else None
-        )
-        self.color_xyY.group_address = (
-            GroupAddress(db.address_color_xyY) if db.address_color_xyY is not None else None
-        )
-        self.color_xyY_status.group_address = (
-            GroupAddress(db.address_color_xyY_status)
-            if db.address_color_xyY_status is not None
-            else None
-        )
-        self.color_rgb.group_address = (
-            GroupAddress(db.address_color_rgb) if db.address_color_rgb is not None else None
-        )
-        self.color_rgb_status.group_address = (
-            GroupAddress(db.address_color_rgb_status)
-            if db.address_color_rgb_status is not None
-            else None
-        )
-        self.dimming_hue.group_address = (
-            GroupAddress(db.address_dimming_hue) if db.address_dimming_hue is not None else None
-        )
-        self.dimming_sat.group_address = (
-            GroupAddress(db.address_dimming_sat) if db.address_dimming_sat is not None else None
-        )
-        self.dimming_cct.group_address = (
-            GroupAddress(db.address_dimming_cct) if db.address_dimming_cct is not None else None
-        )
-        self.dimming_hue_status.group_address = (
-            GroupAddress(db.address_dimming_hue_status)
-            if db.address_dimming_hue_status is not None
-            else None
-        )
-        self.dimming_sat_status.group_address = (
-            GroupAddress(db.address_dimming_sat_status)
-            if db.address_dimming_sat_status is not None
-            else None
-        )
-        self.dimming_cct_status.group_address = (
-            GroupAddress(db.address_dimming_cct_status)
-            if db.address_dimming_cct_status is not None
-            else None
-        )
-        self.address_switch = db.address_switch
-        self.addresses_switch_state = db.addresses_switch_state
-        self.address_switch_status = db.address_switch_status
-        self.address_dimming_val = db.address_dimming_val
-        self.address_brightness = db.address_brightness
-        self.address_brightness_status = db.address_brightness_status
-        self.address_color_xyY = db.address_color_xyY
-        self.address_color_xyY_status = db.address_color_xyY_status
-        self.address_color_rgb = db.address_color_rgb
-        self.address_color_rgb_status = db.address_color_rgb_status
-        self.address_dimming_hue = db.address_dimming_hue
-        self.address_dimming_sat = db.address_dimming_sat
-        self.address_dimming_cct = db.address_dimming_cct
-        self.address_dimming_hue_status = db.address_dimming_hue_status
-        self.address_dimming_sat_status = db.address_dimming_sat_status
-        self.address_dimming_cct_status = db.address_dimming_cct_status
-
-        if db.addresses_switch_state:
-            self.switch_states = [
-                RemoteValueSwitch(
-                    self.xknx,
-                    address.strip(),
-                    device_name=self.name,
-                    after_update_cb=self.switch_state_cb,
-                )
-                for address in db.addresses_switch_state.split(",")
-            ]
+    def update(self, addresses):
+        self.switch.group_addresses = addresses["SW"]
+        self.switch_status.group_addresses = addresses["SW_STAT"]
+        self.dimming_val.group_addresses = addresses["VAL_DIM"]
+        self.brightness.group_addresses = addresses["VAL"]
+        self.brightness_status.group_addresses = addresses["VAL_STAT"]
+        self.color_xyY.group_addresses = addresses["CLR_xyY"]
+        self.color_xyY_status.group_addresses = addresses["CLR_xyY_STAT"]
+        self.color_rgb.group_addresses = addresses["CLR_RGB"]
+        self.color_rgb_status.group_addresses = addresses["CLR_RGB_STAT"]
+        self.dimming_hue.group_addresses = addresses["CLR_H_DIM"]
+        self.dimming_sat.group_addresses = addresses["CLR_S_DIM"]
+        self.dimming_cct.group_addresses = addresses["CLR_CCT_DIM"]
+        self.dimming_hue_status.group_addresses = addresses["CLR_H_STAT"]
+        self.dimming_sat_status.group_addresses = addresses["CLR_S_STAT"]
+        self.dimming_cct_status.group_addresses = addresses["CLR_CCT_STAT"]
 
     @property
     def supports_dimming(self):
