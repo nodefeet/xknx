@@ -46,17 +46,17 @@ class Group(Device):
         super().__init__(xknx, name)
         self.xknx = xknx
 
-        self.switch = RemoteValueSwitch(
+        self.sw = RemoteValueSwitch(
             xknx, addresses["SW"], device_name=self.name, after_update_cb=switch_cb
         )
 
-        self.switch_status = RemoteValueSwitch(xknx, addresses["SW_STAT"], device_name=self.name)
+        self.sw_stat = RemoteValueSwitch(xknx, addresses["SW_STAT"], device_name=self.name)
 
-        self.dimming_val = RemoteValueDpt3(
+        self.val_dim = RemoteValueDpt3(
             xknx, addresses["VAL_DIM"], device_name=self.name, after_update_cb=dimming_val_cb,
         )
 
-        self.brightness = RemoteValueScaling(
+        self.val = RemoteValueScaling(
             xknx,
             addresses["VAL"],
             device_name=self.name,
@@ -65,64 +65,68 @@ class Group(Device):
             range_to=255,
         )
 
-        self.brightness_status = RemoteValueScaling(
+        self.val_stat = RemoteValueScaling(
             xknx, addresses["VAL_STAT"], device_name=self.name, range_from=0, range_to=255,
         )
 
-        self.color_xyY = RemoteValueColorXyY(xknx, addresses["CLR_xyY"], device_name=self.name)
+        self.clr_xyy = RemoteValueColorXyY(xknx, addresses["CLR_xyY"], device_name=self.name)
 
-        self.color_xyY_status = RemoteValueColorXyY(
+        self.clr_xyy_stat = RemoteValueColorXyY(
             xknx, addresses["CLR_xyY_STAT"], device_name=self.name
         )
 
-        self.color_rgb = RemoteValueColorRGB(
+        self.clr_rgb = RemoteValueColorRGB(
             xknx, addresses["CLR_RGB"], device_name=self.name, after_update_cb=color_rgb_cb
         )
 
-        self.color_rgb_status = RemoteValueColorRGB(
+        self.clr_rgb_stat = RemoteValueColorRGB(
             xknx, addresses["CLR_RGB_STAT"], device_name=self.name
         )
 
-        self.dimming_hue = RemoteValueDpt3(
+        self.clr_h_dim = RemoteValueDpt3(
             xknx, addresses["CLR_H_DIM"], device_name=self.name, after_update_cb=dimming_hue_cb,
         )
 
-        self.dimming_sat = RemoteValueDpt3(
+        self.clr_s_dim = RemoteValueDpt3(
             xknx, addresses["CLR_S_DIM"], device_name=self.name, after_update_cb=dimming_sat_cb,
         )
 
-        self.dimming_cct = RemoteValueDpt3(
+        self.clr_cct_dim = RemoteValueDpt3(
             xknx, addresses["CLR_CCT_DIM"], device_name=self.name, after_update_cb=dimming_cct_cb,
         )
 
-        self.dimming_hue_status = RemoteValueScaling(
+        self.clr_h_stat = RemoteValueScaling(
             xknx, addresses["CLR_H_STAT"], device_name=self.name, range_from=0, range_to=360,
         )
 
-        self.dimming_sat_status = RemoteValueScaling(
+        self.clr_s_stat = RemoteValueScaling(
             xknx, addresses["CLR_S_STAT"], device_name=self.name, range_from=0, range_to=255,
         )
 
-        self.dimming_cct_status = RemoteValueScaling(
+        self.clr_cct_stat = RemoteValueScaling(
             xknx, addresses["CLR_CCT_STAT"], device_name=self.name, range_from=0, range_to=255,
         )
 
     def update(self, addresses):
-        self.switch.group_addresses = addresses["SW"]
-        self.switch_status.group_addresses = addresses["SW_STAT"]
-        self.dimming_val.group_addresses = addresses["VAL_DIM"]
-        self.brightness.group_addresses = addresses["VAL"]
-        self.brightness_status.group_addresses = addresses["VAL_STAT"]
-        self.color_xyY.group_addresses = addresses["CLR_xyY"]
-        self.color_xyY_status.group_addresses = addresses["CLR_xyY_STAT"]
-        self.color_rgb.group_addresses = addresses["CLR_RGB"]
-        self.color_rgb_status.group_addresses = addresses["CLR_RGB_STAT"]
-        self.dimming_hue.group_addresses = addresses["CLR_H_DIM"]
-        self.dimming_sat.group_addresses = addresses["CLR_S_DIM"]
-        self.dimming_cct.group_addresses = addresses["CLR_CCT_DIM"]
-        self.dimming_hue_status.group_addresses = addresses["CLR_H_STAT"]
-        self.dimming_sat_status.group_addresses = addresses["CLR_S_STAT"]
-        self.dimming_cct_status.group_addresses = addresses["CLR_CCT_STAT"]
+        self.sw.group_addresses = addresses["SW"]
+        self.sw_stat.group_addresses = addresses["SW_STAT"]
+        #
+        self.val_dim.group_addresses = addresses["VAL_DIM"]
+        self.val.group_addresses = addresses["VAL"]
+        self.val_stat.group_addresses = addresses["VAL_STAT"]
+        #
+        self.clr_xyy.group_addresses = addresses["CLR_xyY"]
+        self.clr_xyy_stat.group_addresses = addresses["CLR_xyY_STAT"]
+        #
+        self.clr_rgb.group_addresses = addresses["CLR_RGB"]
+        self.clr_rgb_stat.group_addresses = addresses["CLR_RGB_STAT"]
+        #
+        self.clr_h_dim.group_addresses = addresses["CLR_H_DIM"]
+        self.clr_s_dim.group_addresses = addresses["CLR_S_DIM"]
+        self.clr_cct_dim.group_addresses = addresses["CLR_CCT_DIM"]
+        self.clr_h_stat.group_addresses = addresses["CLR_H_STAT"]
+        self.clr_s_stat.group_addresses = addresses["CLR_S_STAT"]
+        self.clr_cct_stat.group_addresses = addresses["CLR_CCT_STAT"]
 
     @property
     def supports_dimming(self):
@@ -141,29 +145,25 @@ class Group(Device):
         return self.color_xyY.initialized
 
     def has_group_address(self, group_address):
-        """Test if device has given group address."""
+        """Test if device has given group address. Not used for Status"""
         return (
-            self.switch.has_group_address(group_address)
-            or self.switch_status.has_group_address(group_address)  # noqa W503
-            or self.dimming_val.has_group_address(group_address)  # noqa W503
-            or self.brightness.has_group_address(group_address)  # noqa W503
-            or self.brightness_status.has_group_address(group_address)  # noqa W503
-            or self.color_xyY.has_group_address(group_address)  # noqa W503
-            or self.color_xyY_status.has_group_address(group_address)  # noqa W503
-            or self.color_rgb.has_group_address(group_address)  # noqa W503
-            or self.color_rgb_status.has_group_address(group_address)  # noqa W503
-            or self.dimming_hue.has_group_address(group_address)  # noqa W503
-            or self.dimming_sat.has_group_address(group_address)  # noqa W503
-            or self.dimming_cct.has_group_address(group_address)  # noqa W503
+            self.sw.has_group_address(group_address)
+            or self.val_dim.has_group_address(group_address)  # noqa W503
+            or self.val.has_group_address(group_address)  # noqa W503
+            or self.clr_xyy.has_group_address(group_address)  # noqa W503
+            or self.clr_rgb.has_group_address(group_address)  # noqa W503
+            or self.clr_h_dim.has_group_address(group_address)  # noqa W503
+            or self.clr_s_dim.has_group_address(group_address)  # noqa W503
+            or self.clr_cct_dim.has_group_address(group_address)  # noqa W503
         )
 
     def __repr__(self):
         """Return object as readable string."""
         return (
-            f"KNX_Group(name={self.name}, st:{self.switch.group_address}"
-            f", dm:{self.dimming_val.group_address}, wr:{self.brightness.group_address}"
-            f", xyY:{self.color_xyY.group_address},rgb:{self.color_rgb.group_address}"
-            f", RMrgb:{self.color_rgb_status.group_address}"
+            f"KNX_Group(name={self.name}, st:{self.sw.group_address}"
+            f", dm:{self.vaL_dim.group_address}, wr:{self.val.group_address}"
+            f", xyY:{self.clr_xyy.group_address},rgb:{self.clr_rgb.group_address}"
+            f", RMrgb:{self.clr_rgb_stat.group_address}"
         )
 
     @property
@@ -173,14 +173,14 @@ class Group(Device):
 
     async def process_group_write(self, telegram):
         """Process incoming GROUP WRITE telegram."""
-        await self.switch.process(telegram)
-        await self.dimming_val.process(telegram)
-        await self.brightness.process(telegram)
-        await self.color_xyY.process(telegram)
-        await self.color_rgb.process(telegram)
-        await self.dimming_hue.process(telegram)
-        await self.dimming_sat.process(telegram)
-        await self.dimming_cct.process(telegram)
+        await self.sw.process(telegram)
+        await self.val_dim.process(telegram)
+        await self.val.process(telegram)
+        await self.clr_xyy.process(telegram)
+        await self.clr_rgb.process(telegram)
+        await self.clr_h_dim.process(telegram)
+        await self.clr_s_dim.process(telegram)
+        await self.clr_cct_dim.process(telegram)
 
     def __eq__(self, other):
         """Equal operator."""
