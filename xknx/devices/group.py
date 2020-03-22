@@ -8,13 +8,11 @@ It provides functionality for
 * setting the color xyY.
 * reading the current state from KNX bus.
 """
-from xknx.remote_value import (
-    RemoteValueColorRGB,
-    RemoteValueColorXyY,
-    RemoteValueDpt3,
-    RemoteValueScaling,
-    RemoteValueSwitch,
-)
+from xknx.remote_value import RemoteValueColorRGB as RV_RGB
+from xknx.remote_value import RemoteValueColorXyY as RV_XYY
+from xknx.remote_value import RemoteValueDpt3 as RV_DIM
+from xknx.remote_value import RemoteValueScaling as RV_SCALE
+from xknx.remote_value import RemoteValueSwitch as RV_SWITCH
 
 from .device import Device
 
@@ -28,84 +26,75 @@ class Group(Device):
         self,
         xknx,
         name,
-        addresses,
-        switch_cb=None,
-        # switch_status_cb=None, <- no callback required
-        switch_state_cb=None,
-        dimming_val_cb=None,
-        brightness_cb=None,
-        # brightness_status_cb=None, <- no callback required
-        color_rgb_cb=None,
-        # color_xyY_status_cb=None, <- no callback required
-        dimming_hue_cb=None,
-        dimming_sat_cb=None,
-        dimming_cct_cb=None,
+        addr,
+        sw_cb=None,
+        #
+        val_cb=None,
+        val_dim_cb=None,
+        #
+        clr_rgb_cb=None,
+        clr_rgb_dim=None,
+        #
+        clr_h_cb=None,
+        clr_h_dim_cb=None,
+        #
+        clr_s_cb=None,
+        clr_s_dim_cb=None,
+        #
+        clr_cct_cb=None,
+        clr_cct_dim_cb=None,
+        #
+        clr_r_cb=None,
+        clr_r_dim_cb=None,
+        #
+        clr_g_cb=None,
+        clr_g_dim_cb=None,
+        #
+        clr_b_cb=None,
+        clr_b_dim_cb=None,
     ):
         """Initialize Group class."""
         # pylint: disable=too-many-arguments
         super().__init__(xknx, name)
         self.xknx = xknx
 
-        self.sw = RemoteValueSwitch(
-            xknx, addresses["SW"], device_name=self.name, after_update_cb=switch_cb
-        )
+        self.sw = RV_SWITCH(xknx, addr["SW"], None, self.name, sw_cb)
+        self.sw_stat = RV_SWITCH(xknx, addr["SW_STAT"], None, self.name)
 
-        self.sw_stat = RemoteValueSwitch(xknx, addresses["SW_STAT"], device_name=self.name)
-
-        self.val_dim = RemoteValueDpt3(
-            xknx, addresses["VAL_DIM"], device_name=self.name, after_update_cb=dimming_val_cb,
-        )
-
-        self.val = RemoteValueScaling(
-            xknx,
-            addresses["VAL"],
-            device_name=self.name,
-            after_update_cb=brightness_cb,
-            range_from=0,
-            range_to=255,
-        )
-
-        self.val_stat = RemoteValueScaling(
-            xknx, addresses["VAL_STAT"], device_name=self.name, range_from=0, range_to=255,
-        )
-
-        self.clr_xyy = RemoteValueColorXyY(xknx, addresses["CLR_xyY"], device_name=self.name)
-
-        self.clr_xyy_stat = RemoteValueColorXyY(
-            xknx, addresses["CLR_xyY_STAT"], device_name=self.name
-        )
-
-        self.clr_rgb = RemoteValueColorRGB(
-            xknx, addresses["CLR_RGB"], device_name=self.name, after_update_cb=color_rgb_cb
-        )
-
-        self.clr_rgb_stat = RemoteValueColorRGB(
-            xknx, addresses["CLR_RGB_STAT"], device_name=self.name
-        )
-
-        self.clr_h_dim = RemoteValueDpt3(
-            xknx, addresses["CLR_H_DIM"], device_name=self.name, after_update_cb=dimming_hue_cb,
-        )
-
-        self.clr_s_dim = RemoteValueDpt3(
-            xknx, addresses["CLR_S_DIM"], device_name=self.name, after_update_cb=dimming_sat_cb,
-        )
-
-        self.clr_cct_dim = RemoteValueDpt3(
-            xknx, addresses["CLR_CCT_DIM"], device_name=self.name, after_update_cb=dimming_cct_cb,
-        )
-
-        self.clr_h_stat = RemoteValueScaling(
-            xknx, addresses["CLR_H_STAT"], device_name=self.name, range_from=0, range_to=360,
-        )
-
-        self.clr_s_stat = RemoteValueScaling(
-            xknx, addresses["CLR_S_STAT"], device_name=self.name, range_from=0, range_to=255,
-        )
-
-        self.clr_cct_stat = RemoteValueScaling(
-            xknx, addresses["CLR_CCT_STAT"], device_name=self.name, range_from=0, range_to=255,
-        )
+        self.val = RV_SCALE(xknx, addr["VAL"], None, self.name, val_cb, 0, 255,)
+        self.val_dim = RV_DIM(xknx, addr["VAL_DIM"], None, self.name, val_dim_cb)
+        self.val_stat = RV_SCALE(xknx, addr["VAL_STAT"], None, self.name, None, 0, 255)
+        #
+        self.clr_xyy = RV_XYY(xknx, addr["CLR_xyY"], None, self.name)
+        self.clr_xyy_stat = RV_XYY(xknx, addr["CLR_xyY_STAT"], None, self.name)
+        #
+        self.clr_rgb = RV_RGB(xknx, addr["CLR_RGB"], None, self.name, clr_rgb_cb)
+        self.clr_rgb_dim = RV_DIM(xknx, addr["CLR_RGB_DIM"], None, self.name, val_dim_cb)
+        self.clr_rgb_stat = RV_RGB(xknx, addr["CLR_RGB_STAT"], None, self.name)
+        #
+        self.clr_r = RV_SCALE(xknx, addr["CLR_R"], None, self.name, clr_r_cb, 0, 255)
+        self.clr_r_dim = RV_DIM(xknx, addr["CLR_R_DIM"], None, self.name, clr_r_dim_cb)
+        self.clr_r_stat = RV_SCALE(xknx, addr["CLR_R_STAT"], None, self.name, None, 0, 255)
+        #
+        self.clr_g = RV_SCALE(xknx, addr["CLR_G"], None, self.name, clr_g_cb, 0, 255)
+        self.clr_g_dim = RV_DIM(xknx, addr["CLR_G_DIM"], None, self.name, clr_g_dim_cb)
+        self.clr_g_stat = RV_SCALE(xknx, addr["CLR_R_STAT"], None, self.name, None, 0, 255)
+        #
+        self.clr_b = RV_SCALE(xknx, addr["CLR_B"], None, self.name, clr_b_cb, 0, 255)
+        self.clr_b_dim = RV_DIM(xknx, addr["CLR_B_DIM"], None, self.name, clr_b_dim_cb)
+        self.clr_b_stat = RV_SCALE(xknx, addr["CLR_B_STAT"], None, self.name, None, 0, 255)
+        #
+        self.clr_h = RV_SCALE(xknx, addr["CLR_H"], None, self.name, clr_h_cb, 0, 360,)
+        self.clr_h_dim = RV_DIM(xknx, addr["CLR_H_DIM"], None, self.name, clr_h_dim_cb)
+        self.clr_h_stat = RV_SCALE(xknx, addr["CLR_H_STAT"], None, self.name, None, 0, 360,)
+        #
+        self.clr_s = RV_SCALE(xknx, addr["CLR_S"], None, self.name, clr_s_cb, 0, 255)
+        self.clr_s_dim = RV_DIM(xknx, addr["CLR_S_DIM"], None, self.name, clr_s_dim_cb)
+        self.clr_s_stat = RV_SCALE(xknx, addr["CLR_S_STAT"], None, self.name, None, 0, 255)
+        #
+        self.clr_cct = RV_SCALE(xknx, addr["CLR_CCT"], None, self.name, clr_cct_cb, 0, 255)
+        self.clr_cct_dim = RV_DIM(xknx, addr["CLR_CCT_DIM"], None, self.name, clr_cct_dim_cb)
+        self.clr_cct_stat = RV_SCALE(xknx, addr["CLR_CCT_STAT"], None, self.name, None, 0, 255)
 
     def update(self, addresses):
         self.sw.group_addresses = addresses["SW"]
@@ -120,6 +109,18 @@ class Group(Device):
         #
         self.clr_rgb.group_addresses = addresses["CLR_RGB"]
         self.clr_rgb_stat.group_addresses = addresses["CLR_RGB_STAT"]
+        #
+        self.clr_r.group_addresses = addresses["CLR_R"]
+        self.clr_r_dim.group_addresses = addresses["CLR_R_DIM"]
+        self.clr_r_stat.group_addresses = addresses["CLR_R_STAT"]
+        #
+        self.clr_g.group_addresses = addresses["CLR_G"]
+        self.clr_g_dim.group_addresses = addresses["CLR_G_DIM"]
+        self.clr_g_stat.group_addresses = addresses["CLR_G_STAT"]
+        #
+        self.clr_b.group_addresses = addresses["CLR_B"]
+        self.clr_b_dim.group_addresses = addresses["CLR_B_DIM"]
+        self.clr_b_stat.group_addresses = addresses["CLR_B_STAT"]
         #
         self.clr_h_dim.group_addresses = addresses["CLR_H_DIM"]
         self.clr_s_dim.group_addresses = addresses["CLR_S_DIM"]
@@ -148,38 +149,70 @@ class Group(Device):
         """Test if device has given group address. Not used for Status"""
         return (
             self.sw.has_group_address(group_address)
-            or self.val_dim.has_group_address(group_address)  # noqa W503
             or self.val.has_group_address(group_address)  # noqa W503
+            or self.val_dim.has_group_address(group_address)  # noqa W503
+            #
             or self.clr_xyy.has_group_address(group_address)  # noqa W503
+            #
             or self.clr_rgb.has_group_address(group_address)  # noqa W503
+            or self.clr_rgb_dim.has_group_address(group_address)  # noqa W503
+            #
+            or self.clr_r.has_group_address(group_address)  # noqa W503
+            or self.clr_r_dim.has_group_address(group_address)  # noqa W503
+            #
+            or self.clr_g.has_group_address(group_address)  # noqa W503
+            or self.clr_g_dim.has_group_address(group_address)  # noqa W503
+            #
+            or self.clr_b.has_group_address(group_address)  # noqa W503
+            or self.clr_b_dim.has_group_address(group_address)  # noqa W503
+            #
+            or self.clr_h.has_group_address(group_address)  # noqa W503
             or self.clr_h_dim.has_group_address(group_address)  # noqa W503
+            #
+            or self.clr_s.has_group_address(group_address)  # noqa W503
             or self.clr_s_dim.has_group_address(group_address)  # noqa W503
+            #
+            or self.clr_cct.has_group_address(group_address)  # noqa W503
             or self.clr_cct_dim.has_group_address(group_address)  # noqa W503
         )
 
     def __repr__(self):
         """Return object as readable string."""
         return (
-            f"KNX_Group(name={self.name}, st:{self.sw.group_address}"
-            f", dm:{self.vaL_dim.group_address}, wr:{self.val.group_address}"
-            f", xyY:{self.clr_xyy.group_address},rgb:{self.clr_rgb.group_address}"
-            f", RMrgb:{self.clr_rgb_stat.group_address}"
+            f"KNX_Group(name={self.name}, sw:{self.sw.group_address}"
+            f", sw_stat: {self.sw_stat.group_address}"
+            f", val_dim:{self.val_dim.group_address}, val:{self.val.group_address}"
+            f", clr_xyy: {self.clr_xyy.group_address}, clr_rgb: {self.clr_rgb.group_address}"
+            f", clr_rgb_stat:{self.clr_rgb_stat.group_address}"
         )
-
-    @property
-    def state(self):
-        """Return the current switch state of the device."""
-        return self.switch.value == RemoteValueSwitch.Value.ON
 
     async def process_group_write(self, telegram):
         """Process incoming GROUP WRITE telegram."""
         await self.sw.process(telegram)
         await self.val_dim.process(telegram)
         await self.val.process(telegram)
+        #
         await self.clr_xyy.process(telegram)
+        #
         await self.clr_rgb.process(telegram)
+        await self.clr_rgb_dim.process(telegram)
+        #
+        await self.clr_r.process(telegram)
+        await self.clr_r_dim.process(telegram)
+        #
+        await self.clr_g.process(telegram)
+        await self.clr_g_dim.process(telegram)
+        #
+        await self.clr_b.process(telegram)
+        await self.clr_b_dim.process(telegram)
+        #
+        await self.clr_h.process(telegram)
         await self.clr_h_dim.process(telegram)
+        #
+        await self.clr_s.process(telegram)
         await self.clr_s_dim.process(telegram)
+        #
+        await self.clr_cct.process(telegram)
         await self.clr_cct_dim.process(telegram)
 
     def __eq__(self, other):
