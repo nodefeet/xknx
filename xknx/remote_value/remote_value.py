@@ -31,6 +31,9 @@ class RemoteValue:
             )
         except TypeError:
             group_address = GroupAddress(group_address.val)
+        except AttributeError:
+            # for type(group_address) == str
+            group_address = [GroupAddress(group_address)]
 
         # if isinstance(group_address, (str, int)):
         # group_address = [GroupAddress(address) for address in group_address]
@@ -176,6 +179,9 @@ class RemoteValue:
             )
         except TypeError:
             self.group_address = GroupAddress(group_address.val)
+        except AttributeError:
+            # for type(group_address) == str
+            group_address = [GroupAddress(group_address)]
 
     def __str__(self):
         """Return object as string representation."""
