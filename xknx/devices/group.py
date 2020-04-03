@@ -35,15 +35,6 @@ class Group(Device):
         clr_rgb_cb=None,
         clr_rgb_dim=None,
         #
-        clr_h_cb=None,
-        clr_h_dim_cb=None,
-        #
-        clr_s_cb=None,
-        clr_s_dim_cb=None,
-        #
-        clr_cct_cb=None,
-        clr_cct_dim_cb=None,
-        #
         clr_r_cb=None,
         clr_r_dim_cb=None,
         #
@@ -52,6 +43,15 @@ class Group(Device):
         #
         clr_b_cb=None,
         clr_b_dim_cb=None,
+        #
+        clr_cct_cb=None,
+        clr_cct_dim_cb=None,
+        #
+        clr_h_cb=None,
+        clr_h_dim_cb=None,
+        #
+        clr_s_cb=None,
+        clr_s_dim_cb=None,
     ):
         """Initialize Group class."""
         # pylint: disable=too-many-arguments
@@ -84,6 +84,10 @@ class Group(Device):
         self.clr_b_dim = RV_DIM(xknx, addr["CLR_B_DIM"], None, self.name, clr_b_dim_cb)
         self.clr_b_stat = RV_SCALE(xknx, addr["CLR_B_STAT"], None, self.name, None, 0, 255)
         #
+        self.clr_cct = RV_SCALE(xknx, addr["CLR_CCT"], None, self.name, clr_cct_cb, 0, 255)
+        self.clr_cct_dim = RV_DIM(xknx, addr["CLR_CCT_DIM"], None, self.name, clr_cct_dim_cb)
+        self.clr_cct_stat = RV_SCALE(xknx, addr["CLR_CCT_STAT"], None, self.name, None, 0, 255)
+        #
         self.clr_h = RV_SCALE(xknx, addr["CLR_H"], None, self.name, clr_h_cb, 0, 360,)
         self.clr_h_dim = RV_DIM(xknx, addr["CLR_H_DIM"], None, self.name, clr_h_dim_cb)
         self.clr_h_stat = RV_SCALE(xknx, addr["CLR_H_STAT"], None, self.name, None, 0, 360,)
@@ -91,23 +95,20 @@ class Group(Device):
         self.clr_s = RV_SCALE(xknx, addr["CLR_S"], None, self.name, clr_s_cb, 0, 255)
         self.clr_s_dim = RV_DIM(xknx, addr["CLR_S_DIM"], None, self.name, clr_s_dim_cb)
         self.clr_s_stat = RV_SCALE(xknx, addr["CLR_S_STAT"], None, self.name, None, 0, 255)
-        #
-        self.clr_cct = RV_SCALE(xknx, addr["CLR_CCT"], None, self.name, clr_cct_cb, 0, 255)
-        self.clr_cct_dim = RV_DIM(xknx, addr["CLR_CCT_DIM"], None, self.name, clr_cct_dim_cb)
-        self.clr_cct_stat = RV_SCALE(xknx, addr["CLR_CCT_STAT"], None, self.name, None, 0, 255)
 
     def update(self, addresses):
         self.sw.group_addresses = addresses["SW"]
         self.sw_stat.group_addresses = addresses["SW_STAT"]
         #
-        self.val_dim.group_addresses = addresses["VAL_DIM"]
         self.val.group_addresses = addresses["VAL"]
+        self.val_dim.group_addresses = addresses["VAL_DIM"]
         self.val_stat.group_addresses = addresses["VAL_STAT"]
         #
         self.clr_xyy.group_addresses = addresses["CLR_xyY"]
         self.clr_xyy_stat.group_addresses = addresses["CLR_xyY_STAT"]
         #
         self.clr_rgb.group_addresses = addresses["CLR_RGB"]
+        self.clr_rgb_dim.group_addresses = addresses["CLR_RGB"]
         self.clr_rgb_stat.group_addresses = addresses["CLR_RGB_STAT"]
         #
         self.clr_r.group_addresses = addresses["CLR_R"]
@@ -122,12 +123,18 @@ class Group(Device):
         self.clr_b_dim.group_addresses = addresses["CLR_B_DIM"]
         self.clr_b_stat.group_addresses = addresses["CLR_B_STAT"]
         #
-        self.clr_h_dim.group_addresses = addresses["CLR_H_DIM"]
-        self.clr_s_dim.group_addresses = addresses["CLR_S_DIM"]
+        self.clr_cct.group_addresses = addresses["CLR_CCT"]
         self.clr_cct_dim.group_addresses = addresses["CLR_CCT_DIM"]
-        self.clr_h_stat.group_addresses = addresses["CLR_H_STAT"]
-        self.clr_s_stat.group_addresses = addresses["CLR_S_STAT"]
         self.clr_cct_stat.group_addresses = addresses["CLR_CCT_STAT"]
+        #
+        self.clr_h.group_addresses = addresses["CLR_H"]
+        self.clr_h_dim.group_addresses = addresses["CLR_H_DIM"]
+        self.clr_h_stat.group_addresses = addresses["CLR_H_STAT"]
+        #
+        self.clr_s_dim.group_addresses = addresses["CLR_S"]
+        self.clr_s_dim.group_addresses = addresses["CLR_S_DIM"]
+        self.clr_s_stat.group_addresses = addresses["CLR_S_STAT"]
+        
 
     @property
     def supports_dimming(self):
