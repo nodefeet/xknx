@@ -29,8 +29,6 @@ class RemoteValue:
             group_address = (
                 [GroupAddress(ga.val) for ga in group_address] if group_address else None
             )
-        except TypeError:
-            group_address = GroupAddress(group_address.val)
         except AttributeError:
             # for type(group_address) == str
             group_address = [GroupAddress(group_address)]
@@ -177,8 +175,6 @@ class RemoteValue:
             self.group_address = (
                 [GroupAddress(ga.val) for ga in group_address] if group_address else None
             )
-        except TypeError:
-            self.group_address = GroupAddress(group_address.val)
         except AttributeError:
             # for type(group_address) == str
             group_address = [GroupAddress(group_address)]
