@@ -62,6 +62,20 @@ class UnsupportedCEMIMessage(XKNXException):
             .format(self.description)
 
 
+class UnsupportedCEMIMessage(XKNXException):
+    """Exception class for unsupported CEMI Messages."""
+
+    def __init__(self, description=""):
+        """Initialize UnsupportedCEMIMessage class."""
+        super().__init__()
+        self.description = description
+
+    def __str__(self):
+        """Return object as readable string."""
+        return '<UnsupportedCEMIMessage description="{0}" />' \
+            .format(self.description)
+
+
 class ConversionError(XKNXException):
     """Exception class for error while converting one type to another."""
 
