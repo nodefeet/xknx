@@ -177,7 +177,7 @@ class RemoteValue:
             )
         except AttributeError:
             # for type(group_address) == str
-            group_address = [GroupAddress(group_address)]
+            self.group_address = [GroupAddress(group_address)]
 
     def __str__(self):
         """Return object as string representation."""
