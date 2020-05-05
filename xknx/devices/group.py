@@ -131,7 +131,7 @@ class Group(Device):
         self.clr_h_dim.group_addresses = addresses["CLR_H_DIM"]
         self.clr_h_stat.group_addresses = addresses["CLR_H_STAT"]
         #
-        self.clr_s_dim.group_addresses = addresses["CLR_S"]
+        self.clr_s.group_addresses = addresses["CLR_S"]
         self.clr_s_dim.group_addresses = addresses["CLR_S_DIM"]
         self.clr_s_stat.group_addresses = addresses["CLR_S_STAT"]
         
