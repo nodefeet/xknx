@@ -78,7 +78,7 @@ class Group(Device):
         #
         self.clr_g = RV_SCALE(xknx, addr["CLR_G"], None, self.name, clr_g_cb, 0, 255)
         self.clr_g_dim = RV_DIM(xknx, addr["CLR_G_DIM"], None, self.name, clr_g_dim_cb)
-        self.clr_g_stat = RV_SCALE(xknx, addr["CLR_R_STAT"], None, self.name, None, 0, 255)
+        self.clr_g_stat = RV_SCALE(xknx, addr["CLR_G_STAT"], None, self.name, None, 0, 255)
         #
         self.clr_b = RV_SCALE(xknx, addr["CLR_B"], None, self.name, clr_b_cb, 0, 255)
         self.clr_b_dim = RV_DIM(xknx, addr["CLR_B_DIM"], None, self.name, clr_b_dim_cb)
