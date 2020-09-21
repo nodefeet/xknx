@@ -10,6 +10,7 @@ It provides functionality for
 """
 from xknx.remote_value import RemoteValueColorRGB as RV_RGB
 from xknx.remote_value import RemoteValueColorXyY as RV_XYY
+from xknx.remote_value import RemoteValueDpt2ByteUnsigned as RV_ABS
 from xknx.remote_value import RemoteValueDpt3 as RV_DIM
 from xknx.remote_value import RemoteValueScaling as RV_SCALE
 from xknx.remote_value import RemoteValueSwitch as RV_SWITCH
@@ -70,6 +71,7 @@ class Group(Device):
         #
         self.clr_xyy = RV_XYY(xknx, addr["CLR_xyY"], None, self.name)
         self.clr_xyy_stat = RV_XYY(xknx, addr["CLR_xyY_STAT"], None, self.name)
+        self.clr_cct_abs = RV_ABS(xknx, addr["CLR_CCT_ABS"], None, self.name)
         #
         self.clr_rgb = RV_RGB(xknx, addr["CLR_RGB"], None, self.name, clr_rgb_cb)
         self.clr_rgb_dim = RV_DIM(xknx, addr["CLR_RGB_DIM"], None, self.name, val_dim_cb)
@@ -115,6 +117,7 @@ class Group(Device):
         #
         self.clr_xyy.group_addresses = addresses["CLR_xyY"]
         self.clr_xyy_stat.group_addresses = addresses["CLR_xyY_STAT"]
+        self.clr_cct_abs.group_addresses = addresses["CLR_CCT_ABS"]
         #
         self.clr_rgb.group_addresses = addresses["CLR_RGB"]
         self.clr_rgb_dim.group_addresses = addresses["CLR_RGB"]
@@ -174,6 +177,7 @@ class Group(Device):
             or self.val_dim.has_group_address(group_address)  # noqa W503
             #
             or self.clr_xyy.has_group_address(group_address)  # noqa W503
+            or self.clr_cct_abs.has_group_address(group_address)  # noqa W503
             #
             or self.clr_rgb.has_group_address(group_address)  # noqa W503
             or self.clr_rgb_dim.has_group_address(group_address)  # noqa W503
