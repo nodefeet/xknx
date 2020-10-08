@@ -220,7 +220,7 @@ class Group(Device):
         await self.val_dim.process(telegram)
         await self.val.process(telegram)
         #
-        await self.clr_xyy.process(telegram)
+        # await self.clr_xyy.process(telegram)
         #
         await self.clr_rgb.process(telegram)
         await self.clr_rgb_dim.process(telegram)
