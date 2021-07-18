@@ -202,6 +202,24 @@ class Group(Device):
             #
             or self.clr_cct.has_group_address(group_address)  # noqa W503
             or self.clr_cct_dim.has_group_address(group_address)  # noqa W503
+            
+            # Status for group read requests
+            or self.clr_rgb_stat.has_group_address(group_address)  # noqa W503
+            #
+            or self.clr_r_stat.has_group_address(group_address)  # noqa W503
+            or self.clr_r_sw_stat.has_group_address(group_address)  # noqa W503
+            #
+            or self.clr_g_stat.has_group_address(group_address)  # noqa W503
+            or self.clr_g_sw_stat.has_group_address(group_address)  # noqa W503
+            #
+            or self.clr_b_stat.has_group_address(group_address)  # noqa W503
+            or self.clr_b_sw_stat.has_group_address(group_address)  # noqa W503
+            #
+            or self.clr_h_stat.has_group_address(group_address)  # noqa W503
+            #
+            or self.clr_s_stat.has_group_address(group_address)  # noqa W503
+            #
+            or self.clr_cct_stat.has_group_address(group_address)  # noqa W503
         )
 
     def __repr__(self):
@@ -245,6 +263,25 @@ class Group(Device):
         #
         await self.clr_cct.process(telegram)
         await self.clr_cct_dim.process(telegram)
+
+    async def process_group_read(self, telegram):
+        """Process incoming GroupValueRead telegrams."""
+        await self.clr_rgb_stat.process_read(telegram)
+        #
+        await self.clr_r_stat.process_read(telegram)
+        await self.clr_r_sw_stat.process_read(telegram)
+        
+        await self.clr_g_stat.process_read(telegram)
+        await self.clr_g_sw_stat.process_read(telegram)
+        #
+        await self.clr_b_stat.process_read(telegram)
+        await self.clr_b_sw_stat.process_read(telegram)
+        #
+        await self.clr_h_stat.process_read(telegram)
+        #
+        await self.clr_s_stat.process_read(telegram)
+        #
+        await self.clr_cct_stat.process_read(telegram)
 
     def __eq__(self, other):
         """Equal operator."""

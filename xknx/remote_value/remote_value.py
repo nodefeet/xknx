@@ -108,6 +108,13 @@ class RemoteValue:
             await self.after_update_cb(self.value, telegram.group_address)
         return True
 
+    async def process_read(self, telegram):
+        """Process read telegram."""
+        if not self.has_group_address(telegram.group_address):
+            return False
+        await self.send(response=True)
+        return True
+
     @property
     def value(self):
         """Return current value."""
