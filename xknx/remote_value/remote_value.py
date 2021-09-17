@@ -100,7 +100,7 @@ class RemoteValue:
                 "payload invalid",
                 payload=telegram.payload,
                 group_address=telegram.group_address,
-                device_name=self.device_name,
+                device_name=f"{self.device_name}->{type(self).__name__}",
             )
 
         self.payload = telegram.payload
