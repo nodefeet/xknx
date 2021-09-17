@@ -3,6 +3,7 @@ Module for managing a Scaling remote value.
 
 DPT 5.001.
 """
+from xknx.exceptions import ConversionError
 from xknx.dpt import DPTArray
 
 from .remote_value import RemoteValue
@@ -36,6 +37,11 @@ class RemoteValueScaling(RemoteValue):
 
     def to_knx(self, value):
         """Convert value to payload."""
+        if not isinstance(value, int):
+            raise ConversionError("Cant serialize RemoteValueScaling DPT 5.001 (wrong type)", value=value, type=type(value))
+        if value not in range(256):
+            raise ConversionError("Cant serialize RemoteValueScaling DPT 5.001 (wrong bytes)", value=value)
+
         knx_value = self._calc_to_knx(self.range_from, self.range_to, value)
         return DPTArray(knx_value)
 

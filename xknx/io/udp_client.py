@@ -179,10 +179,16 @@ class UDPClient:
         if self.transport is None:
             raise XKNXException("Transport not connected")
 
-        if self.multicast:
-            self.transport.sendto(bytes(knxipframe.to_knx()), self.remote_addr)
+        val = knxipframe.to_knx()
+        try:
+            val = bytes(val)
+        except ValueError as ex:
+            raise XKNXException(f"KNX IP Frame Byte Error: {ex}")
         else:
-            self.transport.sendto(bytes(knxipframe.to_knx()))
+            if self.multicast:
+                self.transport.sendto(val, self.remote_addr)
+            else:
+                self.transport.sendto(val)
 
     def getsockname(self):
         """Return sockname."""
