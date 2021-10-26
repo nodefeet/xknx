@@ -56,6 +56,8 @@ class Group(Device):
         #
         clr_s_cb=None,
         clr_s_dim_cb=None,
+        #
+        clr_cct_abs_in_cb=None,
     ):
         """Initialize Group class."""
         # pylint: disable=too-many-arguments
@@ -99,6 +101,9 @@ class Group(Device):
         self.clr_cct_dim = RV_DIM(xknx, addr["CLR_CCT_DIM"], None, self.name, clr_cct_dim_cb)
         self.clr_cct_stat = RV_SCALE(xknx, addr["CLR_CCT_STAT"], None, self.name, None, 0, 255)
         #
+        self.clr_cct_abs_in = RV_ABS(xknx, addr["CLR_CCT_ABS_IN"], None, self.name, clr_cct_abs_in_cb)
+        self.clr_cct_abs_stat = RV_ABS(xknx, addr["CLR_CCT_ABS_STAT"], None, self.name)
+        #
         self.clr_h = RV_SCALE(xknx, addr["CLR_H"], None, self.name, clr_h_cb, 0, 360,)
         self.clr_h_dim = RV_DIM(xknx, addr["CLR_H_DIM"], None, self.name, clr_h_dim_cb)
         self.clr_h_stat = RV_SCALE(xknx, addr["CLR_H_STAT"], None, self.name, None, 0, 360,)
@@ -106,6 +111,9 @@ class Group(Device):
         self.clr_s = RV_SCALE(xknx, addr["CLR_S"], None, self.name, clr_s_cb, 0, 255)
         self.clr_s_dim = RV_DIM(xknx, addr["CLR_S_DIM"], None, self.name, clr_s_dim_cb)
         self.clr_s_stat = RV_SCALE(xknx, addr["CLR_S_STAT"], None, self.name, None, 0, 255)
+
+        self.clr_tw_ww = RV_SCALE(xknx, addr["CLR_TW_WW"], None, self.name, None, 0, 255)
+        self.clr_tw_cw = RV_SCALE(xknx, addr["CLR_TW_CW"], None, self.name, None, 0, 255)
 
     def update(self, addresses):
         self.sw.group_addresses = addresses["SW"]
@@ -145,6 +153,9 @@ class Group(Device):
         self.clr_cct_dim.group_addresses = addresses["CLR_CCT_DIM"]
         self.clr_cct_stat.group_addresses = addresses["CLR_CCT_STAT"]
         #
+        self.clr_cct_abs_in.group_addresses = addresses["CLR_CCT_ABS_IN"]       
+        self.clr_cct_abs_stat.group_addresses = addresses["CLR_CCT_ABS_STAT"]
+        #
         self.clr_h.group_addresses = addresses["CLR_H"]
         self.clr_h_dim.group_addresses = addresses["CLR_H_DIM"]
         self.clr_h_stat.group_addresses = addresses["CLR_H_STAT"]
@@ -152,6 +163,9 @@ class Group(Device):
         self.clr_s.group_addresses = addresses["CLR_S"]
         self.clr_s_dim.group_addresses = addresses["CLR_S_DIM"]
         self.clr_s_stat.group_addresses = addresses["CLR_S_STAT"]
+        #
+        self.clr_tw_ww.group_addresses = addresses["CLR_TW_WW"]
+        self.clr_tw_cw.group_addresses = addresses["CLR_TW_CW"]
 
     @property
     def supports_dimming(self):
@@ -202,7 +216,7 @@ class Group(Device):
             #
             or self.clr_cct.has_group_address(group_address)  # noqa W503
             or self.clr_cct_dim.has_group_address(group_address)  # noqa W503
-            
+            or self.clr_cct_abs_in.has_group_address(group_address)  # noqa W503
             # Status for group read requests
             or self.clr_rgb_stat.has_group_address(group_address)  # noqa W503
             #
@@ -220,6 +234,10 @@ class Group(Device):
             or self.clr_s_stat.has_group_address(group_address)  # noqa W503
             #
             or self.clr_cct_stat.has_group_address(group_address)  # noqa W503
+            or self.clr_cct_abs_stat.has_group_address(group_address)  # noqa W503
+            #
+            or self.clr_tw_ww.has_group_address(group_address)  # noqa W503
+            or self.clr_tw_cw.has_group_address(group_address)  # noqa W503
         )
 
     def __repr__(self):
@@ -263,6 +281,8 @@ class Group(Device):
         #
         await self.clr_cct.process(telegram)
         await self.clr_cct_dim.process(telegram)
+        #
+        await self.clr_cct_abs_in.process(telegram)
 
     async def process_group_read(self, telegram):
         """Process incoming GroupValueRead telegrams."""
@@ -270,7 +290,7 @@ class Group(Device):
         #
         await self.clr_r_stat.process_read(telegram)
         await self.clr_r_sw_stat.process_read(telegram)
-        
+        #
         await self.clr_g_stat.process_read(telegram)
         await self.clr_g_sw_stat.process_read(telegram)
         #
@@ -282,6 +302,7 @@ class Group(Device):
         await self.clr_s_stat.process_read(telegram)
         #
         await self.clr_cct_stat.process_read(telegram)
+        await self.clr_cct_abs_stat.process_read(telegram)
 
     def __eq__(self, other):
         """Equal operator."""
