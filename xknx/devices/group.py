@@ -218,6 +218,10 @@ class Group(Device):
             or self.clr_cct_dim.has_group_address(group_address)  # noqa W503
             or self.clr_cct_abs_in.has_group_address(group_address)  # noqa W503
             # Status for group read requests
+            # sw and val_stat needed in GW function
+            or self.sw_stat.has_group_address(group_address)  # noqa W503
+            or self.val_stat.has_group_address(group_address)  # noqa W503
+            #
             or self.clr_rgb_stat.has_group_address(group_address)  # noqa W503
             #
             or self.clr_r_stat.has_group_address(group_address)  # noqa W503
@@ -286,6 +290,9 @@ class Group(Device):
 
     async def process_group_read(self, telegram):
         """Process incoming GroupValueRead telegrams."""
+        await self.sw_stat.process_read(telegram)
+        await self.val_stat.process_read(telegram)
+        #
         await self.clr_rgb_stat.process_read(telegram)
         #
         await self.clr_r_stat.process_read(telegram)
