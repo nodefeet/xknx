@@ -34,17 +34,21 @@ class Group(Device):
         val_dim_cb=None,
         #
         clr_rgb_cb=None,
+        clr_rgb_bri_cb=None,
         clr_rgb_dim=None,
         #
         clr_r_cb=None,
+        clr_r_bri_cb=None,
         clr_r_dim_cb=None,
         clr_r_sw_cb=None,
         #
         clr_g_cb=None,
+        clr_g_bri_cb=None,
         clr_g_dim_cb=None,
         clr_g_sw_cb=None,
         #
         clr_b_cb=None,
+        clr_b_bri_cb=None,
         clr_b_dim_cb=None,
         clr_b_sw_cb=None,
         #
@@ -76,22 +80,26 @@ class Group(Device):
         self.clr_cct_abs = RV_ABS(xknx, addr["CLR_CCT_ABS"], None, self.name)
         #
         self.clr_rgb = RV_RGB(xknx, addr["CLR_RGB"], None, self.name, clr_rgb_cb)
+        self.clr_rgb_bri = RV_RGB(xknx, addr["CLR_RGB_BRI"], None, self.name, clr_rgb_bri_cb)
         self.clr_rgb_dim = RV_DIM(xknx, addr["CLR_RGB_DIM"], None, self.name, val_dim_cb)
         self.clr_rgb_stat = RV_RGB(xknx, addr["CLR_RGB_STAT"], None, self.name)
         #
         self.clr_r = RV_SCALE(xknx, addr["CLR_R"], None, self.name, clr_r_cb, 0, 255)
+        self.clr_r_bri = RV_SCALE(xknx, addr["CLR_R_BRI"], None, self.name, clr_r_bri_cb, 0, 255)
         self.clr_r_dim = RV_DIM(xknx, addr["CLR_R_DIM"], None, self.name, clr_r_dim_cb)
         self.clr_r_stat = RV_SCALE(xknx, addr["CLR_R_STAT"], None, self.name, None, 0, 255)
         self.clr_r_sw = RV_SWITCH(xknx, addr["CLR_R_SW"], None, self.name, clr_r_sw_cb)
         self.clr_r_sw_stat = RV_SWITCH(xknx, addr["CLR_R_SW_STAT"], None, self.name)
         #
         self.clr_g = RV_SCALE(xknx, addr["CLR_G"], None, self.name, clr_g_cb, 0, 255)
+        self.clr_g_bri = RV_SCALE(xknx, addr["CLR_G_BRI"], None, self.name, clr_g_bri_cb, 0, 255)
         self.clr_g_dim = RV_DIM(xknx, addr["CLR_G_DIM"], None, self.name, clr_g_dim_cb)
         self.clr_g_stat = RV_SCALE(xknx, addr["CLR_G_STAT"], None, self.name, None, 0, 255)
         self.clr_g_sw = RV_SWITCH(xknx, addr["CLR_G_SW"], None, self.name, clr_g_sw_cb)
         self.clr_g_sw_stat = RV_SWITCH(xknx, addr["CLR_G_SW_STAT"], None, self.name)
         #
         self.clr_b = RV_SCALE(xknx, addr["CLR_B"], None, self.name, clr_b_cb, 0, 255)
+        self.clr_b_bri = RV_SCALE(xknx, addr["CLR_B_BRI"], None, self.name, clr_b_bri_cb, 0, 255)
         self.clr_b_dim = RV_DIM(xknx, addr["CLR_B_DIM"], None, self.name, clr_b_dim_cb)
         self.clr_b_stat = RV_SCALE(xknx, addr["CLR_B_STAT"], None, self.name, None, 0, 255)
         self.clr_b_sw = RV_SWITCH(xknx, addr["CLR_B_SW"], None, self.name, clr_b_sw_cb)
@@ -128,22 +136,26 @@ class Group(Device):
         self.clr_cct_abs.group_addresses = addresses["CLR_CCT_ABS"]
         #
         self.clr_rgb.group_addresses = addresses["CLR_RGB"]
+        self.clr_rgb_bri.group_addresses = addresses["CLR_RGB_BRI"]
         self.clr_rgb_dim.group_addresses = addresses["CLR_RGB"]
         self.clr_rgb_stat.group_addresses = addresses["CLR_RGB_STAT"]
         #
         self.clr_r.group_addresses = addresses["CLR_R"]
+        self.clr_r_bri.group_addresses = addresses["CLR_R_BRI"]
         self.clr_r_dim.group_addresses = addresses["CLR_R_DIM"]
         self.clr_r_stat.group_addresses = addresses["CLR_R_STAT"]
         self.clr_r_sw.group_addresses = addresses["CLR_R_SW"]
         self.clr_r_sw_stat.group_addresses = addresses["CLR_R_SW_STAT"]
         #
         self.clr_g.group_addresses = addresses["CLR_G"]
+        self.clr_g_bri.group_addresses = addresses["CLR_G_BRI"]
         self.clr_g_dim.group_addresses = addresses["CLR_G_DIM"]
         self.clr_g_stat.group_addresses = addresses["CLR_G_STAT"]
         self.clr_g_sw.group_addresses = addresses["CLR_G_SW"]
         self.clr_g_sw_stat.group_addresses = addresses["CLR_G_SW_STAT"]
         #
         self.clr_b.group_addresses = addresses["CLR_B"]
+        self.clr_b_bri.group_addresses = addresses["CLR_B_BRI"]
         self.clr_b_dim.group_addresses = addresses["CLR_B_DIM"]
         self.clr_b_stat.group_addresses = addresses["CLR_B_STAT"]
         self.clr_b_sw.group_addresses = addresses["CLR_B_SW"]
@@ -194,17 +206,21 @@ class Group(Device):
             or self.clr_cct_abs.has_group_address(group_address)  # noqa W503
             #
             or self.clr_rgb.has_group_address(group_address)  # noqa W503
+            or self.clr_rgb_bri.has_group_address(group_address)  # noqa W503
             or self.clr_rgb_dim.has_group_address(group_address)  # noqa W503
             #
             or self.clr_r.has_group_address(group_address)  # noqa W503
+            or self.clr_r_bri.has_group_address(group_address)  # noqa W503
             or self.clr_r_dim.has_group_address(group_address)  # noqa W503
             or self.clr_r_sw.has_group_address(group_address)  # noqa W503
             #
             or self.clr_g.has_group_address(group_address)  # noqa W503
+            or self.clr_g_bri.has_group_address(group_address)  # noqa W503
             or self.clr_g_dim.has_group_address(group_address)  # noqa W503
             or self.clr_g_sw.has_group_address(group_address)  # noqa W503
             #
             or self.clr_b.has_group_address(group_address)  # noqa W503
+            or self.clr_b_bri.has_group_address(group_address)  # noqa W503
             or self.clr_b_dim.has_group_address(group_address)  # noqa W503
             or self.clr_b_sw.has_group_address(group_address)  # noqa W503
             #
@@ -263,17 +279,21 @@ class Group(Device):
         # await self.clr_xyy.process(telegram)
         #
         await self.clr_rgb.process(telegram)
+        await self.clr_rgb_bri.process(telegram)
         await self.clr_rgb_dim.process(telegram)
         #
         await self.clr_r.process(telegram)
+        await self.clr_r_bri.process(telegram)
         await self.clr_r_dim.process(telegram)
         await self.clr_r_sw.process(telegram)
         #
         await self.clr_g.process(telegram)
+        await self.clr_g_bri.process(telegram)
         await self.clr_g_dim.process(telegram)
         await self.clr_g_sw.process(telegram)
         #
         await self.clr_b.process(telegram)
+        await self.clr_b_bri.process(telegram)
         await self.clr_b_dim.process(telegram)
         await self.clr_b_sw.process(telegram)
         #
