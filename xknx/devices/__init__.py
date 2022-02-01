@@ -8,7 +8,6 @@ from .cover import Cover
 from .datetime import DateTime, DateTimeBroadcastType
 from .device import Device
 from .devices import Devices
-from .diagram import Diagram
 from .expose_sensor import ExposeSensor
 from .fan import Fan
 from .group import Group
