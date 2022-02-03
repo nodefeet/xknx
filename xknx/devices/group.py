@@ -81,7 +81,7 @@ class Group(Device):
         #
         self.clr_rgb = RV_RGB(xknx, addr["CLR_RGB"], None, self.name, clr_rgb_cb)
         self.clr_rgb_bri = RV_RGB(xknx, addr["CLR_RGB_BRI"], None, self.name, clr_rgb_bri_cb)
-        self.clr_rgb_dim = RV_DIM(xknx, addr["CLR_RGB_DIM"], None, self.name, val_dim_cb)
+        self.clr_rgb_dim = RV_DIM(xknx, addr["CLR_RGB_DIM"], None, self.name, clr_rgb_dim)
         self.clr_rgb_stat = RV_RGB(xknx, addr["CLR_RGB_STAT"], None, self.name)
         #
         self.clr_r = RV_SCALE(xknx, addr["CLR_R"], None, self.name, clr_r_cb, 0, 255)
@@ -137,7 +137,7 @@ class Group(Device):
         #
         self.clr_rgb.group_addresses = addresses["CLR_RGB"]
         self.clr_rgb_bri.group_addresses = addresses["CLR_RGB_BRI"]
-        self.clr_rgb_dim.group_addresses = addresses["CLR_RGB"]
+        self.clr_rgb_dim.group_addresses = addresses["CLR_RGB_DIM"]
         self.clr_rgb_stat.group_addresses = addresses["CLR_RGB_STAT"]
         #
         self.clr_r.group_addresses = addresses["CLR_R"]
