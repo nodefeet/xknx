@@ -33,6 +33,8 @@ class Group(Device):
         val_cb=None,
         val_dim_cb=None,
         #
+        clr_xyY_cb=None,
+        #
         clr_rgb_cb=None,
         clr_rgb_bri_cb=None,
         clr_rgb_dim=None,
@@ -75,7 +77,7 @@ class Group(Device):
         self.val_dim = RV_DIM(xknx, addr["VAL_DIM"], None, self.name, val_dim_cb)
         self.val_stat = RV_SCALE(xknx, addr["VAL_STAT"], None, self.name, None, 0, 255)
         #
-        self.clr_xyy = RV_XYY(xknx, addr["CLR_xyY"], None, self.name)
+        self.clr_xyy = RV_XYY(xknx, addr["CLR_xyY"], None, self.name, clr_xyY_cb)
         self.clr_xyy_stat = RV_XYY(xknx, addr["CLR_xyY_STAT"], None, self.name)
         self.clr_cct_abs = RV_ABS(xknx, addr["CLR_CCT_ABS"], None, self.name)
         #
