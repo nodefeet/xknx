@@ -34,6 +34,7 @@ class Group(Device):
         val_dim_cb=None,
         #
         clr_xyY_cb=None,
+        clr_cct_abs_cb=None,
         #
         clr_rgb_cb=None,
         clr_rgb_bri_cb=None,
@@ -79,7 +80,7 @@ class Group(Device):
         #
         self.clr_xyy = RV_XYY(xknx, addr["CLR_xyY"], None, self.name, clr_xyY_cb)
         self.clr_xyy_stat = RV_XYY(xknx, addr["CLR_xyY_STAT"], None, self.name)
-        self.clr_cct_abs = RV_ABS(xknx, addr["CLR_CCT_ABS"], None, self.name)
+        self.clr_cct_abs = RV_ABS(xknx, addr["CLR_CCT_ABS"], None, self.name, clr_cct_abs_cb)
         #
         self.clr_rgb = RV_RGB(xknx, addr["CLR_RGB"], None, self.name, clr_rgb_cb)
         self.clr_rgb_bri = RV_RGB(xknx, addr["CLR_RGB_BRI"], None, self.name, clr_rgb_bri_cb)
@@ -111,7 +112,9 @@ class Group(Device):
         self.clr_cct_dim = RV_DIM(xknx, addr["CLR_CCT_DIM"], None, self.name, clr_cct_dim_cb)
         self.clr_cct_stat = RV_SCALE(xknx, addr["CLR_CCT_STAT"], None, self.name, None, 0, 255)
         #
-        self.clr_cct_abs_in = RV_ABS(xknx, addr["CLR_CCT_ABS_IN"], None, self.name, clr_cct_abs_in_cb)
+        self.clr_cct_abs_in = RV_ABS(
+            xknx, addr["CLR_CCT_ABS_IN"], None, self.name, clr_cct_abs_in_cb
+        )
         self.clr_cct_abs_stat = RV_ABS(xknx, addr["CLR_CCT_ABS_STAT"], None, self.name)
         #
         self.clr_h = RV_SCALE(xknx, addr["CLR_H"], None, self.name, clr_h_cb, 0, 360,)
@@ -167,7 +170,7 @@ class Group(Device):
         self.clr_cct_dim.group_addresses = addresses["CLR_CCT_DIM"]
         self.clr_cct_stat.group_addresses = addresses["CLR_CCT_STAT"]
         #
-        self.clr_cct_abs_in.group_addresses = addresses["CLR_CCT_ABS_IN"]       
+        self.clr_cct_abs_in.group_addresses = addresses["CLR_CCT_ABS_IN"]
         self.clr_cct_abs_stat.group_addresses = addresses["CLR_CCT_ABS_STAT"]
         #
         self.clr_h.group_addresses = addresses["CLR_H"]
@@ -279,6 +282,7 @@ class Group(Device):
         await self.val.process(telegram)
         #
         # await self.clr_xyy.process(telegram)
+        await self.clr_cct_abs.process(telegram)
         #
         await self.clr_rgb.process(telegram)
         await self.clr_rgb_bri.process(telegram)
