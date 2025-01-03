@@ -211,6 +211,7 @@ class GroupAddress(BaseAddress):
         else:
             if sub > self.MAX_SUB_SHORT:
                 raise CouldNotParseAddress(address)
+            self.levels = GroupAddressType.SHORT
         return (main << 11) + (middle << 8) + sub if middle is not None else (main << 11) + sub
 
     @property
